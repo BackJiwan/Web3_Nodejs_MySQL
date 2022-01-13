@@ -35,42 +35,23 @@ var app = http.createServer(function(request,response){
               response.end(html);
           });
       } else { //홈화면이 아니라면 글을 클릭한이후 상세보기이다.
-        /*fs.readdir('./data', function(error, filelist){
-          var filteredId = path.parse(queryData.id).base;
-          fs.readFile(`data/${filteredId}`, 'utf8', function(err, description){
-            var title = queryData.id;
-            var sanitizedTitle = sanitizeHtml(title);
-            var sanitizedDescription = sanitizeHtml(description, {
-              allowedTags:['h1']
-            });
-            var list = template.list(filelist);
-            var html = template.HTML(sanitizedTitle, list,
-              `<h2>${sanitizedTitle}</h2>${sanitizedDescription}`,
-              ` <a href="/create">create</a>
-                <a href="/update?id=${sanitizedTitle}">update</a>
-                <form action="delete_process" method="post">
-                  <input type="hidden" name="id" value="${sanitizedTitle}">
-                  <input type="submit" value="delete">
-                </form>`
-            );
-            response.writeHead(200);
-            response.end(html);
-          });
-        });*/
           db.query(`SELECT * FROM topic`,function(error,topics){
               if(error){
                   throw error;
               }
-              db.query(`SELECT * FROM topic WHERE id=?`,[queryData.id],function (error2,topic){
+              db.query(`SELECT * FROM topic LEFT JOIN author ON topic.author_id = author.id WHERE topic.id=?`,[queryData.id],function (error2,topic){
                   if(error2){
                       throw error2;
                   }
-                  console.log(topic[0].title);
+                  console.log(topic);
                   var title = topic[0].title;
                   var description = topic[0].description;
+                  //var name = topic[0].name;
                   var list = template.list(topics);
                   var html = template.HTML(title, list,
-                      `<h2>${title}</h2>${description}`,
+                      `<h2>${title}</h2>
+                                 ${description}
+                                 <p>by ${topic[0].name}</p> `,
                       `<a href="/create">create</a>
                                  <a href="/update?id=${queryData.id}">update</a>
                                  <form action="delete_process" method="post">

@@ -1,19 +1,8 @@
 var http = require('http');
-var fs = require('fs');
 var url = require('url');
 var qs = require('querystring');
 var template = require('./lib/template.js');
-var path = require('path');
-var sanitizeHtml = require('sanitize-html');
-var mysql = require('mysql');
-var db = mysql.createConnection({
-    host     : 'localhost',
-    user     : 'nodejs',
-    password : 'ch1356@f',
-    port     : '3306',
-    database : 'opentutorials'
-})
-db.connect(); //실제 접속이 일어나는 곳
+var db = require('./lib/db.js');
 
 var app = http.createServer(function(request,response){
     var _url = request.url;
